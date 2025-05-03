@@ -6,8 +6,11 @@ import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/serve-static'
 import fs, { readFile } from 'fs/promises'
 import path from 'path'
+import { Resend } from 'resend'
 
 const app = new Hono()
+
+const resend = new Resend(Bun.env.RESEND_API_KEY)
 
 app.use('*', cors({
   origin: Bun.env.ORIGIN_URL || 'http://localhost:5173',
@@ -126,5 +129,33 @@ app.post('/api/upload-image', async (c) => {
   return c.json({ url: `${Bun.env.BASE_URL}/uploads/${fileName}` })
 })
 
+app.post('/api/contact', async (c) => {
+  const { firstName, lastName, email, message } = await c.req.json()
+
+  const fullName = `${firstName} ${lastName}`
+
+  try {
+    await resend.emails.send({
+      from: 'Contact Form <noreply@beaverbuffdetails.ca>',
+      to: [Bun.env.CONTACT_FORM_TO!],
+      subject: `New message from ${fullName}`,
+      replyTo: email,
+      text: `
+New contact form submission:
+
+Name: ${fullName}
+Email: ${email}
+
+Message:
+${message}
+      `.trim()
+    })
+
+    return c.json({ status: 'sent' })
+  } catch (err) {
+    console.error(err)
+    return c.text('Failed to send message', 500)
+  }
+})
 
 export default app
