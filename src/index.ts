@@ -27,7 +27,7 @@ app.use('/uploads/*', serveStatic({
 }))
 
 // --- GET: Public content route
-app.get('/api/content/:page', async (c) => {
+app.get('/content/:page', async (c) => {
   const page = c.req.param('page')
   const content = await getContent(page)
 
@@ -39,7 +39,7 @@ app.get('/api/content/:page', async (c) => {
 })
 
 // --- PATCH: Protected content update route
-app.patch('/api/content', async (c) => {
+app.patch('/content', async (c) => {
   const auth = c.req.header('Authorization')
   if (!auth?.startsWith('Bearer ')) return c.text('Unauthorized', 401)
 
@@ -78,7 +78,7 @@ app.patch('/api/content', async (c) => {
 })
 
 // --- POST: Auth with username/password, returns JWT token
-app.post('/api/authenticate', async (c) => {
+app.post('/authenticate', async (c) => {
   const { username, password } = await c.req.json()
 
   const result = db
@@ -98,7 +98,7 @@ app.post('/api/authenticate', async (c) => {
   return c.json({ username, token })
 })
 
-app.post('/api/upload-image', async (c) => {
+app.post('/upload-image', async (c) => {
   const auth = c.req.header('Authorization')
   if (!auth?.startsWith('Bearer ')) return c.text('Unauthorized', 401)
 
