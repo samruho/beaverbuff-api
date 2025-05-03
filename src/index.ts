@@ -10,7 +10,7 @@ import path from 'path'
 const app = new Hono()
 
 app.use('*', cors({
-  origin: 'http://beaverbuffdetails.ca:5173',
+  origin: Bun.env.ORIGIN_URL || 'http://localhost:5173',
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PATCH']
 }))
