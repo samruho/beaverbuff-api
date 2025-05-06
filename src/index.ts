@@ -13,7 +13,7 @@ const app = new Hono()
 const resend = new Resend(Bun.env.RESEND_API_KEY)
 
 app.use('*', cors({
-  origin: Bun.env.ORIGIN_URL || 'http://localhost:5173',
+  origin: [Bun.env.ORIGIN_URL || 'http://localhost:5173', 'http://localhost:5173'],
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PATCH']
 }))
